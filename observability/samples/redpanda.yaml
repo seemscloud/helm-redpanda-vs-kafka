@@ -6,6 +6,10 @@ spec:
   image: "vectorized/redpanda"
   version: "latest"
   replicas: 3
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9644"
+    prometheus.io/path: "/metrics"
   resources:
     requests:
       cpu: 1

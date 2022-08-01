@@ -19,7 +19,7 @@ helm upgrade --install observability . -f values.yaml
 
 ## Monitoring
 
-### Grfana
+### Grafana
 
 ```bash
 kubectl get secrets grafana -o go-template --template='{{index .data "admin-password"}}' | base64 -d
