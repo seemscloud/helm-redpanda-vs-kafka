@@ -497,13 +497,6 @@ prometheus:
               type: 'A'
               port: 5556
               refresh_interval: 10s
-        - job_name: kafka-metrics
-          dns_sd_configs:
-            - names:
-                - 'kafka-metrics'
-              type: 'A'
-              port: 9308
-              refresh_interval: 10s
         - job_name: redpanda
           static_configs:
           - targets:
@@ -650,7 +643,15 @@ grafana:
   extraVolumeMounts: [ ]
   lifecycleHooks: { }
   plugins: [ ]
-  datasources: { }
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus:80
+        access: proxy
+        isDefault: true
   notifiers: { }
   dashboardProviders: { }
   dashboards: { }
@@ -710,7 +711,7 @@ grafana:
       extraMounts: [ ]
       sizeLimit: { }
     datasources:
-      enabled: false
+      enabled: true
       label: grafana_datasource
       labelValue: ""
       searchNamespace: null
@@ -1962,7 +1963,7 @@ kafka:
     kafka:
       ## @param metrics.kafka.enabled Whether or not to create a standalone Kafka exporter to expose Kafka metrics
       ##
-      enabled: true
+      enabled: false
       ## Bitnami Kafka exporter image
       ## ref: https://hub.docker.com/r/bitnami/kafka-exporter/tags/
       ## @param metrics.kafka.image.registry Kafka exporter image registry
