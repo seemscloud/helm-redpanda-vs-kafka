@@ -1,9 +1,19 @@
+# Install
+
+## Cert Manager
 ```bash
+VERSION=`curl -s https://api.github.com/repos/redpanda-data/redpanda/releases/latest | grep tag_name | grep -Po "tag_name\": \"\K[a-z0-9A-Z\.]*"`
+kubectl apply -k https://github.com/redpanda-data/redpanda/src/go/k8s/config/crd?ref=$VERSION
+```
+
+## Red Panda vs Kafka Stack
+```
 helm dependency update
 
 helm upgrade --install observability . -f values.yaml
 ```
 
+## Additionals
 # Delete Filebeats
 kubectl delete pod `kubectl  get pods | grep -i filebeat | awk '{print $1}' | xargs` --force
 
