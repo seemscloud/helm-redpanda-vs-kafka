@@ -1,0 +1,42 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: premium-rwo
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: data
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: data
+        image: debian:bullseye-slim
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            apt-get update;
+            apt-get install wget -y;
+            wget https://github.com/seemscloud/sample-log-file/raw/main/java.log -O java.log;
+            rm -f /data/server.log;
+            for i in `seq 1 100` ; do
+              cat java.log >> /data/server.log;
+              echo "+ ${i}"
+            done
+            cat /data/server.log | wc -l;
+        volumeMounts:
+        - mountPath: /data
+          name: data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data

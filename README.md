@@ -1,1 +1,0 @@
-# helm-redpanda-vs-kafka
