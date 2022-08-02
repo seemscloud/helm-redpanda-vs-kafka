@@ -858,7 +858,7 @@ filebeat-kafka:
   fullnameOverride: "filebeat-kafka"
   nameOverride: ""
 
-  replicas: 1 # Filebeat replicas
+  replicas: 75 # Filebeat replicas
 
   daemonset:
     enabled: false
@@ -2867,7 +2867,7 @@ filebeat-redpanda:
   fullnameOverride: "filebeat-redpanda"
   nameOverride: ""
 
-  replicas: 1 # Filebeat replicas
+  replicas: 75 # Filebeat replicas
 
   daemonset:
     enabled: false
