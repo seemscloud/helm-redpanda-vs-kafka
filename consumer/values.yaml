@@ -20,8 +20,12 @@ consumer:
   logstashPipeline:
     logstash.conf: |-
       input {
-        beats {
-          port => 5044
+        kafka {
+          bootstrap_servers => [ "kafka:9092" ]
+          topics => [ "filebeat" ]
+          client_id => "${HOSTNAME}"
+          group_id => "consumer"
+          decorate_events => false
         }
       }
       output {
@@ -31,41 +35,16 @@ consumer:
   logstashPatternDir: "/usr/share/logstash/patterns/"
 
   logstashPattern: { }
-  #    pattern.conf: |
-  #      DPKG_VERSION [-+~<>\.0-9a-zA-Z]+
 
   extraEnvs: [ ]
-  #  - name: MY_ENVIRONMENT_VAR
-  #    value: the_value_goes_here
 
   envFrom: [ ]
-  # - secretRef:
-  #     name: env-secret
-  # - configMapRef:
-  #     name: config-map
 
   secrets: [ ]
-  #  - name: "env"
-  #    value:
-  #      ELASTICSEARCH_PASSWORD: "LS1CRUdJTiBgUFJJVkFURSB"
-  #      api_key: ui2CsdUadTiBasRJRkl9tvNnw
-  #  - name: "tls"
-  #    value:
-  #      ca.crt: |
-  #        LS0tLS1CRUdJT0K
-  #        LS0tLS1CRUdJT0K
-  #        LS0tLS1CRUdJT0K
-  #        LS0tLS1CRUdJT0K
-  #      cert.crt: "LS0tLS1CRUdJTiBlRJRklDQVRFLS0tLS0K"
-  #      cert.key.filepath: "secrets.crt" # The path to file should be relative to the `values.yaml` file.
 
   secretMounts: [ ]
 
   hostAliases: [ ]
-  #- ip: "127.0.0.1"
-  #  hostnames:
-  #  - "foo.local"
-  #  - "bar.local"
 
   image: "docker.elastic.co/logstash/logstash"
   imageTag: "7.17.3"
@@ -99,11 +78,7 @@ consumer:
     create: false
     serviceAccountAnnotations: { }
     serviceAccountName: ""
-    annotations:
-      { }
-    #annotation1: "value1"
-    #annotation2: "value2"
-    #annotation3: "value3"
+    annotations: { }
 
   podSecurityPolicy:
     create: false
@@ -127,17 +102,8 @@ consumer:
     enabled: false
     annotations: { }
 
-  extraVolumes:
-    [ ]
-  # - name: extras
-  #   emptyDir: {}
-
-  extraVolumeMounts:
-    [ ]
-  # - name: extras
-  #   mountPath: /usr/share/extras
-  #   readOnly: true
-
+  extraVolumes: [ ]
+  extraVolumeMounts: [ ]
   extraContainers:
     - name: exporter
       image: bitnami/logstash-exporter
@@ -168,11 +134,7 @@ consumer:
         periodSeconds: 10
         timeoutSeconds: 5
 
-  extraInitContainers:
-    [ ]
-  # - name: do-something
-  #   image: busybox
-  #   command: ['do', 'something']
+  extraInitContainers: [ ]
 
   priorityClassName: ""
 
@@ -218,21 +180,6 @@ consumer:
 
   terminationGracePeriod: 120
 
-  # Probes
-  # Default probes are using `httpGet` which requires that `http.host: 0.0.0.0` is part of
-  # `logstash.yml`. If needed probes can be disabled or overridden using the following syntaxes:
-  #
-  # disable livenessProbe
-  # livenessProbe: null
-  #
-  # replace httpGet default readinessProbe by some exec probe
-  # readinessProbe:
-  #   httpGet: null
-  #   exec:
-  #     command:
-  #       - curl
-  #      - localhost:9600
-
   livenessProbe:
     httpGet:
       path: /
@@ -259,12 +206,6 @@ consumer:
   tolerations: [ ]
 
   lifecycle: { }
-  # preStop:
-  #   exec:
-  #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
-  # postStart:
-  #   exec:
-  #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
 
   service:
     annotations: { }
