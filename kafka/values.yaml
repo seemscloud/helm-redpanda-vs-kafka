@@ -1170,7 +1170,7 @@ kafka:
     ##
     topics:
       - name: "filebeat"
-        partitions: 128
+        partitions: 64
         replicationFactor: 3
         config:
           retention.ms: "3600000"
