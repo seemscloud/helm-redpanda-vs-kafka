@@ -2,7 +2,7 @@ consumer:
   nameOverride: ""
   fullnameOverride: "consumer"
 
-  replicas: 10
+  replicas: 16
 
   logstashConfig:
     logstash.yml: |
@@ -13,7 +13,7 @@ consumer:
         pipeline.batch.delay: 50
         pipeline.ecs_compatibility: disabled
         pipeline.ordered: false
-        pipeline.workers: 6
+        pipeline.workers: 8
         path.config: "/usr/share/logstash/pipeline/logstash.conf"
         queue.type: memory
 
@@ -24,7 +24,7 @@ consumer:
           bootstrap_servers => [ "kafka:9092" ]
           topics => [ "filebeat" ]
           auto_offset_reset => "earliest"
-          consumer_threads => 9
+          consumer_threads => 8
           client_id => "${HOSTNAME}"
           group_id => "consumer"
           decorate_events => false
