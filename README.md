@@ -1,5 +1,5 @@
 ```bash
-kubectl get secrets grafana -o go-template --template='{{index .data "admin-password"}}' | base64 -d
+kubectl get secrets monitoring-grafana -o go-template --template='{{index .data "admin-password"}}' | base64 -d
 
 kubectl delete pod `kubectl  get pods | grep -i filebeat | awk '{print $1}' | xargs` --force
 ```
