@@ -2,7 +2,7 @@ producer:
   nameOverride: ""
   fullnameOverride: "producer"
 
-  replicas: 18
+  replicas: 100
 
   daemonset:
     enabled: false
@@ -33,16 +33,14 @@ producer:
               - /data/server.log
 
         output.kafka:
-          hosts: [ "kafka:9092" ]
+          hosts: [ "kafka:9092" ] 
+          # hosts: [ "redpanda:9092" ]
           topic: "filebeat"
           required_acks: 1
           compression: gzip
 
     nodeSelector: { }
     secretMounts: [ ]
-    #  - name: filebeat-certificates
-    #    secretName: filebeat-certificates
-    #    path: /usr/share/filebeat/certs
     securityContext:
       runAsUser: 0
       privileged: false
@@ -67,14 +65,7 @@ producer:
   hostPathRoot: /var/lib
 
   dnsConfig: { }
-  # options:
-  #   - name: ndots
-  #     value: "2"
   hostAliases: [ ]
-  #- ip: "127.0.0.1"
-  #  hostnames:
-  #  - "foo.local"
-  #  - "bar.local"
   image: "docker.elastic.co/beats/filebeat"
   imageTag: "7.17.3"
   imagePullPolicy: "IfNotPresent"

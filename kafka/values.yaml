@@ -1444,6 +1444,12 @@ kafka:
       - name: "filebeat"
         partitions: 64
         replicationFactor: 3
+        config:
+          retention.ms: "600000"
+          segment.bytes: "536870912"
+          retention.bytes: "-1"
+
+
     ## @param provisioning.tolerations Tolerations for pod assignment
     ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
     ##

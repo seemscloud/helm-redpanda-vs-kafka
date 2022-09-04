@@ -1,47 +1,25 @@
-# Install
-
-## Deployment
-
-### Cert Manager
-
-```bash
-VERSION=`curl -s https://api.github.com/repos/redpanda-data/redpanda/releases/latest | grep tag_name | grep -Po "tag_name\": \"\K[a-z0-9A-Z\.]*"`
-kubectl apply -k https://github.com/redpanda-data/redpanda/src/go/k8s/config/crd?ref=$VERSION
-```
-
-### Red Panda vs Kafka Stack
-
-```
-helm dependency update
-
-helm upgrade --install observability . -f values.yaml
-```
-
-## Monitoring
-
-### Grafana
-
 ```bash
 kubectl get secrets grafana -o go-template --template='{{index .data "admin-password"}}' | base64 -d
-```
-
-### Prometheus
-
-```bash
-http://prometheus:80
-```
-
-## Additionals
-
-# Delete Filebeats
 
 kubectl delete pod `kubectl  get pods | grep -i filebeat | awk '{print $1}' | xargs` --force
+```
 
-# Grafana
+```bash
+sum(rate(vectorized_kafka_rpc_received_bytes[1m])/1000/1000)
+sum(rate(kafka_server_brokertopicmetrics_total_bytesinpersec_count[1m])/1000/1000)
+```
 
-increase(logstash_node_pipeline_events_in_total[1m])
-sum(increase(logstash_node_pipeline_events_in_total[1m]))
+```bash
+sum(rate(vectorized_kafka_rpc_sent_bytes[1m])/1000/1000)
+sum(rate(kafka_server_brokertopicmetrics_total_bytesoutpersec_count[1m])/1000/1000)
+```
 
-# RPK
-
-rpk topic create filebeat -r 3 -p 64
+```bash
+rpk topic delete filebeat
+rpk topic create filebeat \
+  --replicas 3 \
+  --partitions 64 \
+  --topic-config segment.bytes=536870912 \
+  --topic-config retention.ms=600000 \
+  --topic-config retention.bytes=-1 
+```
