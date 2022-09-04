@@ -1,0 +1,301 @@
+consumer:
+  nameOverride: ""
+  fullnameOverride: "consumer"
+
+  replicas: 1
+
+  logstashConfig:
+    logstash.yml: |
+      http.host: "0.0.0.0"
+    pipelines.yml: |
+      - pipeline.id: main
+        pipeline.batch.size: 1000
+        pipeline.batch.delay: 50
+        pipeline.ecs_compatibility: disabled
+        pipeline.ordered: false
+        pipeline.workers: 6
+        path.config: "/usr/share/logstash/pipeline/logstash.conf"
+        queue.type: memory
+
+  logstashPipeline:
+    logstash.conf: |-
+      input {
+        beats {
+          port => 5044
+        }
+      }
+      output {
+        null {}
+      }
+
+  logstashPatternDir: "/usr/share/logstash/patterns/"
+
+  logstashPattern: { }
+  #    pattern.conf: |
+  #      DPKG_VERSION [-+~<>\.0-9a-zA-Z]+
+
+  extraEnvs: [ ]
+  #  - name: MY_ENVIRONMENT_VAR
+  #    value: the_value_goes_here
+
+  envFrom: [ ]
+  # - secretRef:
+  #     name: env-secret
+  # - configMapRef:
+  #     name: config-map
+
+  secrets: [ ]
+  #  - name: "env"
+  #    value:
+  #      ELASTICSEARCH_PASSWORD: "LS1CRUdJTiBgUFJJVkFURSB"
+  #      api_key: ui2CsdUadTiBasRJRkl9tvNnw
+  #  - name: "tls"
+  #    value:
+  #      ca.crt: |
+  #        LS0tLS1CRUdJT0K
+  #        LS0tLS1CRUdJT0K
+  #        LS0tLS1CRUdJT0K
+  #        LS0tLS1CRUdJT0K
+  #      cert.crt: "LS0tLS1CRUdJTiBlRJRklDQVRFLS0tLS0K"
+  #      cert.key.filepath: "secrets.crt" # The path to file should be relative to the `values.yaml` file.
+
+  secretMounts: [ ]
+
+  hostAliases: [ ]
+  #- ip: "127.0.0.1"
+  #  hostnames:
+  #  - "foo.local"
+  #  - "bar.local"
+
+  image: "docker.elastic.co/logstash/logstash"
+  imageTag: "7.17.3"
+  imagePullPolicy: "IfNotPresent"
+  imagePullSecrets: [ ]
+
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9100"
+    prometheus.io/path: "/metrics"
+
+  labels: { }
+
+  logstashJavaOpts: "-Xmx8g -Xms8g"
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "100Mi"
+    limits:
+      cpu: "6"
+      memory: "8704Mi"
+
+  volumeClaimTemplate:
+    accessModes: [ "ReadWriteOnce" ]
+    resources:
+      requests:
+        storage: 1Gi
+
+  rbac:
+    create: false
+    serviceAccountAnnotations: { }
+    serviceAccountName: ""
+    annotations:
+      { }
+    #annotation1: "value1"
+    #annotation2: "value2"
+    #annotation3: "value3"
+
+  podSecurityPolicy:
+    create: false
+    name: ""
+    spec:
+      privileged: false
+      fsGroup:
+        rule: RunAsAny
+      runAsUser:
+        rule: RunAsAny
+      seLinux:
+        rule: RunAsAny
+      supplementalGroups:
+        rule: RunAsAny
+      volumes:
+        - secret
+        - configMap
+        - persistentVolumeClaim
+
+  persistence:
+    enabled: false
+    annotations: { }
+
+  extraVolumes:
+    [ ]
+  # - name: extras
+  #   emptyDir: {}
+
+  extraVolumeMounts:
+    [ ]
+  # - name: extras
+  #   mountPath: /usr/share/extras
+  #   readOnly: true
+
+  extraContainers:
+    - name: exporter
+      image: bitnami/logstash-exporter
+      command: [ "logstash_exporter", "--web.listen-address=0.0.0.0:9100" ]
+      livenessProbe:
+        exec:
+          command:
+            - sh
+            - -c
+            - |
+              #!/usr/bin/env bash -e
+              true
+        failureThreshold: 3
+        initialDelaySeconds: 1
+        periodSeconds: 10
+        timeoutSeconds: 5
+
+      readinessProbe:
+        exec:
+          command:
+            - sh
+            - -c
+            - |
+              #!/usr/bin/env bash -e
+              true
+        failureThreshold: 3
+        initialDelaySeconds: 1
+        periodSeconds: 10
+        timeoutSeconds: 5
+
+  extraInitContainers:
+    [ ]
+  # - name: do-something
+  #   image: busybox
+  #   command: ['do', 'something']
+
+  priorityClassName: ""
+
+  antiAffinityTopologyKey: "kubernetes.io/hostname"
+
+  antiAffinity: "hard"
+
+  nodeAffinity: { }
+
+  podAffinity: { }
+
+  podManagementPolicy: "Parallel"
+
+  httpPort: 9600
+
+  extraPorts:
+    - name: beats0
+      containerPort: 5044
+    - name: beats1
+      containerPort: 5055
+    - name: beats2
+      containerPort: 5066
+    - name: logstash
+      containerPort: 9600
+    - name: exporter
+      containerPort: 9100
+
+  updateStrategy: RollingUpdate
+
+  maxUnavailable: 1
+
+  podSecurityContext:
+    fsGroup: 1000
+    runAsUser: 1000
+
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
+    # readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+
+  terminationGracePeriod: 120
+
+  # Probes
+  # Default probes are using `httpGet` which requires that `http.host: 0.0.0.0` is part of
+  # `logstash.yml`. If needed probes can be disabled or overridden using the following syntaxes:
+  #
+  # disable livenessProbe
+  # livenessProbe: null
+  #
+  # replace httpGet default readinessProbe by some exec probe
+  # readinessProbe:
+  #   httpGet: null
+  #   exec:
+  #     command:
+  #       - curl
+  #      - localhost:9600
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 25
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 25
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 3
+
+  schedulerName: ""
+
+  nodeSelector: { }
+  tolerations: [ ]
+
+  lifecycle: { }
+  # preStop:
+  #   exec:
+  #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+  # postStart:
+  #   exec:
+  #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+
+  service:
+    annotations: { }
+    type: ClusterIP
+    loadBalancerIP: ""
+    ports:
+      - name: beats0
+        port: 5044
+        targetPort: 5044
+        protocol: TCP
+      - name: beats1
+        port: 5055
+        targetPort: 5055
+        protocol: TCP
+      - name: beats2
+        port: 5066
+        targetPort: 5066
+        protocol: TCP
+      - name: http
+        port: 9600
+        targetPort: 9600
+        protocol: TCP
+      - name: exporter
+        port: 9100
+        targetPort: 9100
+        protocol: TCP
+
+  ingress:
+    enabled: false
+    annotations: { }
+    className: "nginx"
+    pathtype: ImplementationSpecific
+    hosts: [ ]
+    tls: [ ]

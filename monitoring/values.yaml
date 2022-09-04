@@ -1,0 +1,909 @@
+prometheus:
+  rbac:
+    create: true
+  podSecurityPolicy:
+    enabled: false
+  imagePullSecrets:
+  serviceAccounts:
+    alertmanager:
+      create: true
+      name:
+      annotations: { }
+    nodeExporter:
+      create: true
+      name:
+      annotations: { }
+    pushgateway:
+      create: true
+      name:
+      annotations: { }
+    server:
+      create: true
+      name:
+      annotations: { }
+  alertmanager:
+    enabled: false
+  configmapReload:
+    prometheus:
+      enabled: true
+      name: configmap-reload
+      image:
+        repository: jimmidyson/configmap-reload
+        tag: v0.5.0
+        pullPolicy: IfNotPresent
+      extraArgs: { }
+      extraVolumeDirs: [ ]
+      extraConfigmapMounts: [ ]
+      containerSecurityContext: { }
+      resources: { }
+    alertmanager:
+      enabled: false
+  kubeStateMetrics:
+    enabled: false
+  nodeExporter:
+    enabled: false
+  server:
+    enabled: true
+    fullnameOverride: "prometheus"
+    name: server
+    sidecarContainers: { }
+    sidecarTemplateValues: { }
+    image:
+      repository: quay.io/prometheus/prometheus
+      tag: v2.36.2
+      pullPolicy: IfNotPresent
+    priorityClassName: ""
+    enableServiceLinks: true
+    prefixURL: ""
+    baseURL: ""
+    env: [ ]
+    defaultFlagsOverride: [ ]
+    extraFlags:
+      - web.enable-lifecycle
+    configPath: /etc/config/prometheus.yml
+    storagePath: ""
+    global:
+      scrape_interval: 5s
+      scrape_timeout: 5s
+      evaluation_interval: 1m
+    remoteWrite: [ ]
+    remoteRead: [ ]
+    probeHeaders: [ ]
+    extraArgs: { }
+    extraInitContainers: [ ]
+    extraVolumeMounts: [ ]
+    extraVolumes: [ ]
+    extraHostPathMounts: [ ]
+    extraConfigmapMounts: [ ]
+    extraSecretMounts: [ ]
+    configMapOverrideName: ""
+    ingress:
+      enabled: false
+      annotations: { }
+      extraLabels: { }
+      hosts: [ ]
+      path: /
+      pathType: Prefix
+      extraPaths: [ ]
+      tls: [ ]
+    hostAliases: [ ]
+    tolerations: [ ]
+    nodeSelector: { }
+    affinity: { }
+    podDisruptionBudget:
+      enabled: false
+      maxUnavailable: 1
+    persistentVolume:
+      enabled: false
+      accessModes:
+        - ReadWriteOnce
+      annotations: { }
+      existingClaim: ""
+      mountPath: /data
+      size: 8Gi
+      subPath: ""
+    emptyDir:
+      sizeLimit: ""
+    podAnnotations: { }
+    podLabels: { }
+    alertmanagers: [ ]
+    podSecurityPolicy:
+      annotations: { }
+    replicaCount: 1
+    deploymentAnnotations: { }
+    statefulSet:
+      enabled: false
+      annotations: { }
+      labels: { }
+      podManagementPolicy: OrderedReady
+      headless:
+        annotations: { }
+        labels: { }
+        servicePort: 80
+        gRPC:
+          enabled: false
+          servicePort: 10901
+    tcpSocketProbeEnabled: false
+    probeScheme: HTTP
+    readinessProbeInitialDelay: 30
+    readinessProbePeriodSeconds: 5
+    readinessProbeTimeout: 4
+    readinessProbeFailureThreshold: 3
+    readinessProbeSuccessThreshold: 1
+    livenessProbeInitialDelay: 30
+    livenessProbePeriodSeconds: 15
+    livenessProbeTimeout: 10
+    livenessProbeFailureThreshold: 3
+    livenessProbeSuccessThreshold: 1
+    startupProbe:
+      enabled: false
+      periodSeconds: 5
+      failureThreshold: 30
+      timeoutSeconds: 10
+    resources: { }
+    hostNetwork: false
+    dnsPolicy: ClusterFirst
+    verticalAutoscaler:
+      enabled: false
+    dnsConfig: { }
+    securityContext:
+      runAsUser: 65534
+      runAsNonRoot: true
+      runAsGroup: 65534
+      fsGroup: 65534
+    containerSecurityContext: { }
+    service:
+      enabled: true
+      annotations: { }
+      labels: { }
+      clusterIP: ""
+      externalIPs: [ ]
+      loadBalancerIP: ""
+      loadBalancerSourceRanges: [ ]
+      servicePort: 80
+      sessionAffinity: None
+      type: LoadBalancer
+      gRPC:
+        enabled: false
+        servicePort: 10901
+      statefulsetReplica:
+        enabled: false
+        replica: 0
+    terminationGracePeriodSeconds: 300
+    retention: "15d"
+    extraObjects: [ ]
+    extraTemplates: [ ]
+  pushgateway:
+    enabled: false
+  alertmanagerFiles: { }
+  ruleFiles: { }
+  serverFiles:
+    alerting_rules.yml: { }
+    alerts: { }
+    recording_rules.yml: { }
+    rules: { }
+    prometheus.yml:
+      scrape_configs:
+        - job_name: 'kubernetes-service-endpoints'
+          honor_labels: true
+
+          kubernetes_sd_configs:
+            - role: endpoints
+
+          relabel_configs:
+            - source_labels: [ __meta_kubernetes_namespace ]
+              action: keep
+              regex: default
+            - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_scrape ]
+              action: keep
+              regex: true
+            - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_scrape_slow ]
+              action: drop
+              regex: true
+            - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_scheme ]
+              action: replace
+              target_label: __scheme__
+              regex: (https?)
+            - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_path ]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+            - source_labels: [ __address__, __meta_kubernetes_service_annotation_prometheus_io_port ]
+              action: replace
+              target_label: __address__
+              regex: (.+?)(?::\d+)?;(\d+)
+              replacement: $1:$2
+            - action: labelmap
+              regex: __meta_kubernetes_service_annotation_prometheus_io_param_(.+)
+              replacement: __param_$1
+            - action: labelmap
+              regex: __meta_kubernetes_service_label_(.+)
+            - source_labels: [ __meta_kubernetes_namespace ]
+              action: replace
+              target_label: namespace
+            - source_labels: [ __meta_kubernetes_service_name ]
+              action: replace
+              target_label: service
+            - source_labels: [ __meta_kubernetes_pod_node_name ]
+              action: replace
+              target_label: node
+
+        - job_name: 'kubernetes-pods'
+          honor_labels: true
+
+          kubernetes_sd_configs:
+            - role: pod
+
+          relabel_configs:
+            - source_labels: [ __meta_kubernetes_namespace ]
+              action: keep
+              regex: default
+            - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scrape ]
+              action: keep
+              regex: true
+            - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scrape_slow ]
+              action: drop
+              regex: true
+            - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scheme ]
+              action: replace
+              regex: (https?)
+              target_label: __scheme__
+            - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_path ]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+            - source_labels: [ __address__, __meta_kubernetes_pod_annotation_prometheus_io_port ]
+              action: replace
+              regex: (.+?)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              target_label: __address__
+            - action: labelmap
+              regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+              replacement: __param_$1
+            - action: labelmap
+              regex: __meta_kubernetes_pod_label_(.+)
+            - source_labels: [ __meta_kubernetes_namespace ]
+              action: replace
+              target_label: namespace
+            - source_labels: [ __meta_kubernetes_pod_name ]
+              action: replace
+              target_label: pod
+            - source_labels: [ __meta_kubernetes_pod_phase ]
+              regex: Pending|Succeeded|Failed|Completed
+              action: drop
+
+  extraScrapeConfigs:
+  alertRelabelConfigs:
+  networkPolicy:
+    enabled: false
+  forceNamespace: null
+  extraManifests: [ ]
+
+grafana:
+  fullnameOverride: "grafana"
+
+  rbac:
+    create: true
+    pspEnabled: true
+    pspUseAppArmor: true
+    namespaced: false
+    extraRoleRules: [ ]
+    extraClusterRoleRules: [ ]
+  serviceAccount:
+    create: true
+    name:
+    nameTest:
+    autoMount: true
+  replicas: 1
+  headlessService: false
+  autoscaling:
+    enabled: false
+  podDisruptionBudget: { }
+  deploymentStrategy:
+    type: RollingUpdate
+  readinessProbe:
+    httpGet:
+      path: /api/health
+      port: 3000
+  livenessProbe:
+    httpGet:
+      path: /api/health
+      port: 3000
+    initialDelaySeconds: 60
+    timeoutSeconds: 30
+    failureThreshold: 10
+  image:
+    repository: grafana/grafana
+    tag: ""
+    sha: ""
+    pullPolicy: IfNotPresent
+  testFramework:
+    enabled: true
+    image: "bats/bats"
+    tag: "v1.4.1"
+    imagePullPolicy: IfNotPresent
+    securityContext: { }
+  securityContext:
+    runAsUser: 472
+    runAsGroup: 472
+    fsGroup: 472
+  containerSecurityContext:
+    { }
+  createConfigmap: true
+  extraConfigmapMounts: [ ]
+  extraEmptyDirMounts: [ ]
+  extraLabels: { }
+  downloadDashboardsImage:
+    repository: curlimages/curl
+    tag: 7.73.0
+    sha: ""
+    pullPolicy: IfNotPresent
+  downloadDashboards:
+    env: { }
+    envFromSecret: ""
+    resources: { }
+  podPortName: grafana
+  service:
+    enabled: true
+    type: LoadBalancer
+    port: 80
+    targetPort: 3000
+    annotations: { }
+    labels: { }
+    portName: service
+  serviceMonitor:
+    enabled: false
+    path: /metrics
+    labels: { }
+    interval: 1m
+    scheme: http
+    tlsConfig: { }
+    scrapeTimeout: 5s
+    relabelings: [ ]
+  extraExposePorts: [ ]
+  hostAliases: [ ]
+  ingress:
+    enabled: false
+    annotations: { }
+    labels: { }
+    path: /
+    pathType: Prefix
+    hosts:
+      - chart-example.local
+    extraPaths: [ ]
+    tls: [ ]
+  resources: { }
+  nodeSelector: { }
+  tolerations: [ ]
+  affinity: { }
+  extraInitContainers: [ ]
+  extraContainers: ""
+  extraContainerVolumes: [ ]
+  persistence:
+    type: pvc
+    enabled: false
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+    finalizers:
+      - kubernetes.io/pvc-protection
+    inMemory:
+      enabled: false
+  initChownData:
+    enabled: true
+    image:
+      repository: busybox
+      tag: "1.31.1"
+      sha: ""
+      pullPolicy: IfNotPresent
+    resources: { }
+  adminUser: admin
+  admin:
+    existingSecret: ""
+    userKey: admin-user
+    passwordKey: admin-password
+  env: { }
+  envValueFrom: { }
+  envFromSecret: ""
+  envRenderSecret: { }
+  envFromSecrets: [ ]
+  envFromConfigMaps: [ ]
+  enableServiceLinks: true
+  extraSecretMounts: [ ]
+  extraVolumeMounts: [ ]
+  lifecycleHooks: { }
+  plugins: [ ]
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          url: http://prometheus:80
+          access: proxy
+          isDefault: true
+  notifiers: { }
+  dashboardProviders: { }
+  dashboards: { }
+  dashboardsConfigMaps: { }
+  grafana.ini:
+    paths:
+      data: /var/lib/grafana/
+      logs: /var/log/grafana
+      plugins: /var/lib/grafana/plugins
+      provisioning: /etc/grafana/provisioning
+    analytics:
+      check_for_updates: true
+    log:
+      mode: console
+    grafana_net:
+      url: https://grafana.net
+  ldap:
+    enabled: false
+    existingSecret: ""
+    config: ""
+  smtp:
+    existingSecret: ""
+    userKey: "user"
+    passwordKey: "password"
+  sidecar:
+    image:
+      repository: quay.io/kiwigrid/k8s-sidecar
+      tag: 1.19.2
+      sha: ""
+    imagePullPolicy: IfNotPresent
+    resources: { }
+    securityContext: { }
+    enableUniqueFilenames: false
+    readinessProbe: { }
+    livenessProbe: { }
+    logLevel: INFO
+    dashboards:
+      enabled: false
+      SCProvider: true
+      label: grafana_dashboard
+      labelValue: ""
+      folder: /tmp/dashboards
+      defaultFolderName: null
+      searchNamespace: null
+      watchMethod: WATCH
+      resource: both
+      folderAnnotation: null
+      script: null
+      provider:
+        name: sidecarProvider
+        orgid: 1
+        folder: ''
+        type: file
+        disableDelete: false
+        allowUiUpdates: false
+        foldersFromFilesStructure: false
+      extraMounts: [ ]
+      sizeLimit: { }
+    datasources:
+      enabled: true
+      label: grafana_datasource
+      labelValue: ""
+      searchNamespace: null
+      watchMethod: WATCH
+      resource: both
+      reloadURL: "http://localhost:3000/api/admin/provisioning/datasources/reload"
+      skipReload: false
+      initDatasources: false
+      sizeLimit: { }
+    plugins:
+      enabled: false
+      label: grafana_plugin
+      labelValue: ""
+      searchNamespace: null
+      watchMethod: WATCH
+      resource: both
+      reloadURL: "http://localhost:3000/api/admin/provisioning/plugins/reload"
+      skipReload: false
+      initPlugins: false
+      sizeLimit: { }
+    notifiers:
+      enabled: false
+      label: grafana_notifier
+      searchNamespace: null
+      resource: both
+      sizeLimit: { }
+  namespaceOverride: ""
+  revisionHistoryLimit: 10
+  imageRenderer:
+    enabled: false
+    replicas: 1
+    image:
+      repository: grafana/grafana-image-renderer
+      tag: latest
+      sha: ""
+      pullPolicy: Always
+    env:
+      HTTP_HOST: "0.0.0.0"
+    serviceAccountName: ""
+    securityContext: { }
+    hostAliases: [ ]
+    priorityClassName: ''
+    service:
+      enabled: true
+      portName: 'http'
+      port: 8081
+      targetPort: 8081
+    grafanaProtocol: http
+    grafanaSubPath: ""
+    podPortName: http
+    revisionHistoryLimit: 10
+    networkPolicy:
+      limitIngress: true
+      limitEgress: false
+    resources: { }
+    nodeSelector: { }
+    tolerations: [ ]
+    affinity: { }
+  networkPolicy:
+    enabled: false
+    ingress: true
+    allowExternal: true
+    explicitNamespacesSelector: { }
+    egress:
+      enabled: false
+      ports: [ ]
+  enableKubeBackwardCompatibility: false
+  useStatefulSet: false
+  extraObjects: [ ]
+
+kowl-kafka:
+  nameOverride: ""
+  fullnameOverride: "kowl-kafka"
+
+  replicaCount: 1
+
+  image:
+    registry: quay.io
+    # Use "cloudhut/kowl-business" for the business version
+    repository: cloudhut/kowl
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  imagePullSecrets: [ ]
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: { }
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  podAnnotations: { }
+
+  podSecurityContext:
+    runAsUser: 99
+    fsGroup: 99
+
+  securityContext:
+    runAsNonRoot: true
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  service:
+    type: LoadBalancer
+    port: 80
+    annotations: { }
+    targetPort: http
+
+  ingress:
+    enabled: false
+    className: ""
+    annotations: { }
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: [ ]
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  resources: { }
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+  nodeSelector: { }
+
+  tolerations: [ ]
+
+  affinity: { }
+
+  kowl:
+    # Config.yaml is required for Kowl and Kowl Business.
+    # See reference config: https://github.com/cloudhut/kowl/blob/master/docs/config/kowl.yaml)
+    config:
+      kafka:
+        brokers:
+          - kafka:9092
+
+  # Additional environment variables for kowl
+  extraEnv: ""
+  # - name: KAFKA_RACKID
+  #   value: "1"
+
+  # Additional environment variables for kowl mapped from Secret or ConfigMap
+  extraEnvFrom: ""
+
+  # Add additional volumes, e. g. for tls keys
+  extraVolumes: ""
+  # Add additional volumes mounts, e. g. for tls keys
+  extraVolumeMounts: ""
+
+  # Add additional containers, e. g. for oauth2-proxy
+  extraContainers: { }
+
+  secret:
+    # existingSecret can be used if you create the secret with the needed key value pairs on your own. Specify the
+    # secret name here and it will be used. Please make sure you specify all the below key names even if you don't need them.
+    # Take a look at /examples/secret.yaml to create the secret.
+    # Valid secret keys are (some only apply for the business version of Kowl):
+    #  - kafka-sasl-password
+    #  - kafka-tls-ca
+    #  - kafka-tls-cert
+    #  - kafka-tls-key
+    #  - kafka-tls-passphrase
+    #  - kafka-schema-registry-password
+    #  - cloudhut-license-token
+    #  - login-jwt-secret (used for signing and validating JWT)
+    #  - login-google-oauth-client-secret
+    #  - login-google-groups-service-account.json
+    #  - login-github-oauth-client-secret
+    #  - login-github-personal-access-token
+    #  - login-okta-client-secret
+    #  - login-okta-directory-api-token
+    existingSecret:
+    # Alternative named for secret keys
+    # Keys for kafka-tls-ca, kafka-tls-cert and kafka-tls-key does not need to alter here. But additional env variables needs to be set like
+    # KAFKA_TLS_CAFILEPATH=/etc/kowl/secrets/<key-name>
+    keyName:
+      cloudhut-license-token: "cloudhut-license-token"
+      kafka-tls-passphrase: "kafka-tls-passphrase"
+      kafka-sasl-password: "kafka-sasl-password"
+      kafka-schema-registry-password: "kafka-schema-registry-password"
+
+    # Secret values in case you want the chart to create a secret
+    # Kafka secrets
+    kafka: { }
+    # saslPassword:
+    # tlsCa:
+    # tlsCert:
+    # tlsKey:
+    # tlsPassphrase:
+    # schemaRegistryPassword:
+    # CloudHut secrets (business version)
+    cloudhut: { }
+    # licenseToken:
+    # SSO secrets (business version)
+    login:
+      google: { }
+      # clientSecret:
+      # groupsServiceAccount:
+      github: { }
+      # clientSecret:
+      # personalAccessToken:
+
+  ## Configure extra options for liveness and readiness probes
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
+  livenessProbe:
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+
+  readinessProbe:
+    # Give Kowl initially some time to connect to all Kafka Brokers
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+
+kowl-redpanda:
+  nameOverride: ""
+  fullnameOverride: "kowl-redpanda"
+
+  replicaCount: 1
+
+  image:
+    registry: quay.io
+    # Use "cloudhut/kowl-business" for the business version
+    repository: cloudhut/kowl
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  imagePullSecrets: [ ]
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: { }
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  podAnnotations: { }
+
+  podSecurityContext:
+    runAsUser: 99
+    fsGroup: 99
+
+  securityContext:
+    runAsNonRoot: true
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  service:
+    type: LoadBalancer
+    port: 80
+    annotations: { }
+    targetPort: http
+
+  ingress:
+    enabled: false
+    className: ""
+    annotations: { }
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: [ ]
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  resources: { }
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+  nodeSelector: { }
+
+  tolerations: [ ]
+
+  affinity: { }
+
+  kowl:
+    # Config.yaml is required for Kowl and Kowl Business.
+    # See reference config: https://github.com/cloudhut/kowl/blob/master/docs/config/kowl.yaml)
+    config:
+      kafka:
+        brokers:
+          - redpanda:9092
+
+  # Additional environment variables for kowl
+  extraEnv: ""
+  # - name: KAFKA_RACKID
+  #   value: "1"
+
+  # Additional environment variables for kowl mapped from Secret or ConfigMap
+  extraEnvFrom: ""
+
+  # Add additional volumes, e. g. for tls keys
+  extraVolumes: ""
+  # Add additional volumes mounts, e. g. for tls keys
+  extraVolumeMounts: ""
+
+  # Add additional containers, e. g. for oauth2-proxy
+  extraContainers: { }
+
+  secret:
+    # existingSecret can be used if you create the secret with the needed key value pairs on your own. Specify the
+    # secret name here and it will be used. Please make sure you specify all the below key names even if you don't need them.
+    # Take a look at /examples/secret.yaml to create the secret.
+    # Valid secret keys are (some only apply for the business version of Kowl):
+    #  - kafka-sasl-password
+    #  - kafka-tls-ca
+    #  - kafka-tls-cert
+    #  - kafka-tls-key
+    #  - kafka-tls-passphrase
+    #  - kafka-schema-registry-password
+    #  - cloudhut-license-token
+    #  - login-jwt-secret (used for signing and validating JWT)
+    #  - login-google-oauth-client-secret
+    #  - login-google-groups-service-account.json
+    #  - login-github-oauth-client-secret
+    #  - login-github-personal-access-token
+    #  - login-okta-client-secret
+    #  - login-okta-directory-api-token
+    existingSecret:
+    # Alternative named for secret keys
+    # Keys for kafka-tls-ca, kafka-tls-cert and kafka-tls-key does not need to alter here. But additional env variables needs to be set like
+    # KAFKA_TLS_CAFILEPATH=/etc/kowl/secrets/<key-name>
+    keyName:
+      cloudhut-license-token: "cloudhut-license-token"
+      kafka-tls-passphrase: "kafka-tls-passphrase"
+      kafka-sasl-password: "kafka-sasl-password"
+      kafka-schema-registry-password: "kafka-schema-registry-password"
+
+    # Secret values in case you want the chart to create a secret
+    # Kafka secrets
+    kafka: { }
+    # saslPassword:
+    # tlsCa:
+    # tlsCert:
+    # tlsKey:
+    # tlsPassphrase:
+    # schemaRegistryPassword:
+    # CloudHut secrets (business version)
+    cloudhut: { }
+    # licenseToken:
+    # SSO secrets (business version)
+    login:
+      google: { }
+      # clientSecret:
+      # groupsServiceAccount:
+      github: { }
+      # clientSecret:
+      # personalAccessToken:
+
+  ## Configure extra options for liveness and readiness probes
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
+  livenessProbe:
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+
+  readinessProbe:
+    # Give Kowl initially some time to connect to all Kafka Brokers
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3

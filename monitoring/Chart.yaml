@@ -1,0 +1,27 @@
+apiVersion: v2
+
+name: monitoring
+description: Umbrella
+
+type: application
+
+version: 0.0.1
+appVersion: "0.0.1"
+
+dependencies:
+  - name: prometheus
+    alias: prometheus
+    version: 15.11.0
+    repository: https://prometheus-community.github.io/helm-charts
+  - name: grafana
+    alias: grafana
+    version: 6.32.9
+    repository: https://grafana.github.io/helm-charts
+  - name: kowl
+    alias: kowl-kafka
+    version: 2.3.1
+    repository: https://raw.githubusercontent.com/cloudhut/charts/master/archives
+  - name: kowl
+    alias: kowl-redpanda
+    version: 2.3.1
+    repository: https://raw.githubusercontent.com/cloudhut/charts/master/archives

@@ -13,12 +13,12 @@ spec:
   resources:
     requests:
       cpu: 1
-      memory: 1Gi
+      memory: 2Gi
     limits:
       cpu: 1
-      memory: 1Gi
+      memory: 2Gi
   storage:
-    capacity: 50Gi
+    capacity: 100Gi
     storageClassName: premium-rwo
   configuration:
     rpcServer:

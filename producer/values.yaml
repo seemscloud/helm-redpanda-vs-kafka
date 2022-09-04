@@ -1,0 +1,144 @@
+producer:
+  nameOverride: ""
+  fullnameOverride: "producer"
+
+  replicas: 75
+
+  daemonset:
+    enabled: false
+
+  deployment:
+    annotations: { }
+    labels: { }
+    affinity: { }
+    enabled: true
+    envFrom: [ ]
+    extraEnvs: [ ]
+    extraVolumes:
+      - name: snapshot
+        persistentVolumeClaim:
+          claimName: snapshot
+    extraVolumeMounts:
+      - mountPath: /data
+        name: snapshot
+    filebeatConfig:
+      filebeat.yml: |
+        http:
+          enabled: true
+          host: "0.0.0.0"
+          port: 5066
+        filebeat.inputs:
+          - type: log
+            paths:
+              - /data/server.log
+
+        output.kafka:
+          hosts: [ "kafka:9092" ]
+          topic: "filebeat"
+          required_acks: 1
+          compression: gzip
+
+    nodeSelector: { }
+    secretMounts: [ ]
+    #  - name: filebeat-certificates
+    #    secretName: filebeat-certificates
+    #    path: /usr/share/filebeat/certs
+    securityContext:
+      runAsUser: 0
+      privileged: false
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "100Mi"
+      limits:
+        cpu: "1"
+        memory: "1Gi"
+    tolerations: [ ]
+
+  extraContainers: |
+    - name: exporter
+      image: sepa/beats-exporter
+      args:
+        - -p=5066
+
+  extraInitContainers: [ ]
+  # - name: dummy-init
+
+  hostPathRoot: /var/lib
+
+  dnsConfig: { }
+  # options:
+  #   - name: ndots
+  #     value: "2"
+  hostAliases: [ ]
+  #- ip: "127.0.0.1"
+  #  hostnames:
+  #  - "foo.local"
+  #  - "bar.local"
+  image: "docker.elastic.co/beats/filebeat"
+  imageTag: "7.17.3"
+  imagePullPolicy: "IfNotPresent"
+  imagePullSecrets: [ ]
+
+  livenessProbe:
+    exec:
+      command:
+        - sh
+        - -c
+        - |
+          #!/usr/bin/env bash -e
+          true
+    failureThreshold: 3
+    initialDelaySeconds: 1
+    periodSeconds: 10
+    timeoutSeconds: 5
+
+  readinessProbe:
+    exec:
+      command:
+        - sh
+        - -c
+        - |
+          #!/usr/bin/env bash -e
+          true
+    failureThreshold: 3
+    initialDelaySeconds: 1
+    periodSeconds: 10
+    timeoutSeconds: 5
+
+  managedServiceAccount: true
+
+  clusterRoleRules:
+    - apiGroups:
+        - ""
+      resources:
+        - namespaces
+        - nodes
+        - pods
+      verbs:
+        - get
+        - list
+        - watch
+    - apiGroups:
+        - "apps"
+      resources:
+        - replicasets
+      verbs:
+        - get
+        - list
+        - watch
+
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/metrics"
+
+  serviceAccount: ""
+
+  serviceAccountAnnotations: { }
+
+  terminationGracePeriod: 30
+
+  priorityClassName: ""
+
+  updateStrategy: RollingUpdate
