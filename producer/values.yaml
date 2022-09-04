@@ -2,7 +2,7 @@ producer:
   nameOverride: ""
   fullnameOverride: "producer"
 
-  replicas: 100
+  replicas: 25
 
   daemonset:
     enabled: false

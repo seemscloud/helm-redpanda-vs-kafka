@@ -2,7 +2,7 @@ consumer:
   nameOverride: ""
   fullnameOverride: "consumer"
 
-  replicas: 16
+  replicas: 5
 
   logstashConfig:
     logstash.yml: |

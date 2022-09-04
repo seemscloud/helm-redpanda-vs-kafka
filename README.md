@@ -16,6 +16,7 @@ sum(rate(kafka_server_brokertopicmetrics_total_bytesoutpersec_count[1m])/1000/10
 
 ```bash
 rpk topic delete filebeat
+
 rpk topic create filebeat \
   --replicas 3 \
   --partitions 128 \
