@@ -1445,7 +1445,7 @@ kafka:
         partitions: 64
         replicationFactor: 3
         config:
-          retention.ms: "600000"
+          retention.ms: "1800000"
           segment.bytes: "536870912"
           retention.bytes: "-1"
 
