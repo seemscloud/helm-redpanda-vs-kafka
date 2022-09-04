@@ -1,0 +1,6 @@
+dependencies:
+- name: kafka-lag-exporter
+  repository: https://seglo.github.io/kafka-lag-exporter/repo/
+  version: 0.7.2
+digest: sha256:30aacec6e95d9e96766c95c0e8ea9ea14569955723a7378e263cca42b8cdca38
+generated: "2022-09-05T00:21:59.447471071+02:00"

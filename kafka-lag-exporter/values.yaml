@@ -1,0 +1,84 @@
+kafka-lag-exporter:
+  clusters:
+    - name: kafka
+      bootstrapBrokers: "kafka-0.kafka-headless.default.svc.cluster.local:9092,kafka-1.kafka-headless.default.svc.cluster.local:9092,kafka-2.kafka-headless.default.svc.cluster.local:9092"
+  pollIntervalSeconds: 30
+  lookupTableSize: 60
+  clientGroupId: "kafkalagexporter"
+  kafkaClientTimeoutSeconds: 10
+  reporters:
+    prometheus:
+      enabled: true
+      port: 8000
+    graphite:
+      enabled: false
+    influxdb:
+      enabled: false
+  watchers:
+    strimzi: false
+  serviceAccount:
+    create: true
+  metricWhitelist:
+    - .*
+  rootLogLevel: DEBUG
+  kafkaLagExporterLogLevel: DEBUG
+  kafkaLogLevel: INFO
+  akkaLogLevel: INFO
+  additionalLabels: #{}
+    app: kafka-lag-exporter
+  image:
+    repository: seglo/kafka-lag-exporter
+    tag: 0.7.2
+    pullPolicy: Always
+    pullSecrets: []
+  securityContext: {}
+  initContainers: []
+  service:
+    type: ClusterIP
+    port: 8000
+    additionalLabels: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  extraConfigmapMounts: []
+  extraMounts: []
+  secrets: {}
+  secretAnnotations: {}
+  hostAliases: {}
+  env: {}
+  envFromConfigMapRefs: []
+  envFromSecretRefs: []
+  podAnnotations: {}
+  podExtraLabels: {}
+  deploymentExtraLabels: {}
+  readinessProbeInitialDelay: 30
+  readinessProbePeriodSeconds: 5
+  readinessProbeTimeout: 30
+  readinessProbeFailureThreshold: 3
+  readinessProbeSuccessThreshold: 1
+  livenessProbeInitialDelay: 30
+  livenessProbePeriodSeconds: 15
+  livenessProbeTimeout: 30
+  livenessProbeFailureThreshold: 3
+  livenessProbeSuccessThreshold: 1
+  prometheus:
+    serviceMonitor:
+      enabled: false
+      interval: "30s"
+      # metricRelabelings:
+      #  - sourceLabels: [__name__]
+      #    regex: ^(process_|jvm_).*$
+      #    action: drop
+      # relabelings: []
+      # service monitor label selectors: https://github.com/helm/charts/blob/f5a751f174263971fafd21eee4e35416d6612a3d/stable/prometheus-operator/templates/prometheus/prometheus.yaml#L74
+      # additionalLabels:
+      #   prometheus: k8s
+      # additionalConfig:
+      #   targetLabels:
+      #   - prometheus
+      #   - app.kubernetes.io/name
+  prometheusRule:
+    enabled: false
+    rules: []
+  logPattern: "%date{ISO8601} %-5level %logger{36} %X{akkaSource} - %msg %ex%n"

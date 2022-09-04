@@ -1,0 +1,15 @@
+apiVersion: v2
+
+name: observability
+description: Umbrella
+
+type: application
+
+version: 0.0.1
+appVersion: "0.0.1"
+
+dependencies:
+  - name: kafka-lag-exporter
+    alias: kafka-lag-exporter
+    version: 0.7.2
+    repository: https://seglo.github.io/kafka-lag-exporter/repo/
