@@ -1037,337 +1037,98 @@ kafka:
   ## Prometheus Exporters / Metrics
   ##
   metrics:
-    ## Prometheus Kafka exporter: exposes complimentary metrics to JMX exporter
-    ##
     kafka:
-      ## @param metrics.kafka.enabled Whether or not to create a standalone Kafka exporter to expose Kafka metrics
-      ##
-      enabled: false
-      ## Bitnami Kafka exporter image
-      ## ref: https://hub.docker.com/r/bitnami/kafka-exporter/tags/
-      ## @param metrics.kafka.image.registry Kafka exporter image registry
-      ## @param metrics.kafka.image.repository Kafka exporter image repository
-      ## @param metrics.kafka.image.tag Kafka exporter image tag (immutable tags are recommended)
-      ## @param metrics.kafka.image.pullPolicy Kafka exporter image pull policy
-      ## @param metrics.kafka.image.pullSecrets Specify docker-registry secret names as an array
-      ##
+      enabled: true
       image:
         registry: docker.io
         repository: bitnami/kafka-exporter
-        tag: 1.4.2-debian-11-r12
-        ## Specify a imagePullPolicy
-        ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
-        ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-        ##
+        tag: 1.6.0-debian-11-r3
         pullPolicy: IfNotPresent
-        ## Optionally specify an array of imagePullSecrets (secrets must be manually created in the namespace)
-        ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-        ## e.g:
-        ## pullSecrets:
-        ##   - myRegistryKeySecretName
-        ##
         pullSecrets: [ ]
-
-      ## @param metrics.kafka.certificatesSecret Name of the existing secret containing the optional certificate and key files
-      ## for Kafka exporter client authentication
-      ##
       certificatesSecret: ""
-      ## @param metrics.kafka.tlsCert The secret key from the certificatesSecret if 'client-cert' key different from the default (cert-file)
-      ##
       tlsCert: cert-file
-      ## @param metrics.kafka.tlsKey The secret key from the certificatesSecret if 'client-key' key different from the default (key-file)
-      ##
       tlsKey: key-file
-      ## @param metrics.kafka.tlsCaSecret Name of the existing secret containing the optional ca certificate for Kafka exporter client authentication
-      ##
       tlsCaSecret: ""
-      ## @param metrics.kafka.tlsCaCert The secret key from the certificatesSecret or tlsCaSecret if 'ca-cert' key different from the default (ca-file)
-      ##
       tlsCaCert: ca-file
-      ## @param metrics.kafka.extraFlags Extra flags to be passed to Kafka exporter
-      ## e.g:
-      ## extraFlags:
-      ##   tls.insecure-skip-tls-verify: ""
-      ##   web.telemetry-path: "/metrics"
-      ##
       extraFlags: { }
-      ## @param metrics.kafka.command Override Kafka exporter container command
-      ##
       command: [ ]
-      ## @param metrics.kafka.args Override Kafka exporter container arguments
-      ##
       args: [ ]
-      ## @param metrics.kafka.containerPorts.metrics Kafka exporter metrics container port
-      ##
       containerPorts:
         metrics: 9308
-      ## Kafka exporter resource requests and limits
-      ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-      ## @param metrics.kafka.resources.limits The resources limits for the container
-      ## @param metrics.kafka.resources.requests The requested resources for the container
-      ##
       resources:
         limits: { }
         requests: { }
-      ## Kafka exporter pods' Security Context
-      ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-      ## @param metrics.kafka.podSecurityContext.enabled Enable security context for the pods
-      ## @param metrics.kafka.podSecurityContext.fsGroup Set Kafka exporter pod's Security Context fsGroup
-      ##
       podSecurityContext:
         enabled: true
         fsGroup: 1001
-      ## Kafka exporter containers' Security Context
-      ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-      ## @param metrics.kafka.containerSecurityContext.enabled Enable Kafka exporter containers' Security Context
-      ## @param metrics.kafka.containerSecurityContext.runAsUser Set Kafka exporter containers' Security Context runAsUser
-      ## @param metrics.kafka.containerSecurityContext.runAsNonRoot Set Kafka exporter containers' Security Context runAsNonRoot
-      ## e.g:
-      ##   containerSecurityContext:
-      ##     enabled: true
-      ##     capabilities:
-      ##       drop: ["NET_RAW"]
-      ##     readOnlyRootFilesystem: true
-      ##
       containerSecurityContext:
         enabled: true
         runAsUser: 1001
         runAsNonRoot: true
-      ## @param metrics.kafka.hostAliases Kafka exporter pods host aliases
-      ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
-      ##
       hostAliases: [ ]
-      ## @param metrics.kafka.podLabels Extra labels for Kafka exporter pods
-      ## Ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-      ##
       podLabels: { }
-      ## @param metrics.kafka.podAnnotations Extra annotations for Kafka exporter pods
-      ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-      ##
       podAnnotations: { }
-      ## @param metrics.kafka.podAffinityPreset Pod affinity preset. Ignored if `metrics.kafka.affinity` is set. Allowed values: `soft` or `hard`
-      ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
-      ##
       podAffinityPreset: ""
-      ## @param metrics.kafka.podAntiAffinityPreset Pod anti-affinity preset. Ignored if `metrics.kafka.affinity` is set. Allowed values: `soft` or `hard`
-      ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
-      ##
       podAntiAffinityPreset: soft
-      ## Node metrics.kafka.affinity preset
-      ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
-      ##
       nodeAffinityPreset:
-        ## @param metrics.kafka.nodeAffinityPreset.type Node affinity preset type. Ignored if `metrics.kafka.affinity` is set. Allowed values: `soft` or `hard`
-        ##
         type: ""
-        ## @param metrics.kafka.nodeAffinityPreset.key Node label key to match Ignored if `metrics.kafka.affinity` is set.
-        ## E.g.
-        ## key: "kubernetes.io/e2e-az-name"
-        ##
         key: ""
-        ## @param metrics.kafka.nodeAffinityPreset.values Node label values to match. Ignored if `metrics.kafka.affinity` is set.
-        ## E.g.
-        ## values:
-        ##   - e2e-az1
-        ##   - e2e-az2
-        ##
         values: [ ]
-      ## @param metrics.kafka.affinity Affinity for pod assignment
-      ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-      ## Note: metrics.kafka.podAffinityPreset, metrics.kafka.podAntiAffinityPreset, and metrics.kafka.nodeAffinityPreset will be ignored when it's set
-      ##
       affinity: { }
-      ## @param metrics.kafka.nodeSelector Node labels for pod assignment
-      ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
-      ##
       nodeSelector: { }
-      ## @param metrics.kafka.tolerations Tolerations for pod assignment
-      ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-      ##
       tolerations: [ ]
-      ## @param metrics.kafka.schedulerName Name of the k8s scheduler (other than default) for Kafka exporter
-      ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
-      ##
       schedulerName: ""
-      ## @param metrics.kafka.priorityClassName Kafka exporter pods' priorityClassName
-      ##
       priorityClassName: ""
-      ## @param metrics.kafka.topologySpreadConstraints Topology Spread Constraints for pod assignment
-      ## https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
-      ## The value is evaluated as a template
-      ##
       topologySpreadConstraints: [ ]
-      ## @param metrics.kafka.extraVolumes Optionally specify extra list of additional volumes for the Kafka exporter pod(s)
-      ## e.g:
-      ## extraVolumes:
-      ##   - name: kafka-jaas
-      ##     secret:
-      ##       secretName: kafka-jaas
-      ##
       extraVolumes: [ ]
-      ## @param metrics.kafka.extraVolumeMounts Optionally specify extra list of additional volumeMounts for the Kafka exporter container(s)
-      ## extraVolumeMounts:
-      ##   - name: kafka-jaas
-      ##     mountPath: /bitnami/kafka/config/kafka_jaas.conf
-      ##     subPath: kafka_jaas.conf
-      ##
       extraVolumeMounts: [ ]
-      ## @param metrics.kafka.sidecars Add additional sidecar containers to the Kafka exporter pod(s)
-      ## e.g:
-      ## sidecars:
-      ##   - name: your-image-name
-      ##     image: your-image
-      ##     imagePullPolicy: Always
-      ##     ports:
-      ##       - name: portname
-      ##         containerPort: 1234
-      ##
       sidecars: [ ]
-      ## @param metrics.kafka.initContainers Add init containers to the Kafka exporter pods
-      ## e.g:
-      ## initContainers:
-      ##   - name: your-image-name
-      ##     image: your-image
-      ##     imagePullPolicy: Always
-      ##     ports:
-      ##       - name: portname
-      ##         containerPort: 1234
-      ##
       initContainers: [ ]
-      ## Kafka exporter service configuration
-      ##
       service:
-        ## @param metrics.kafka.service.ports.metrics Kafka exporter metrics service port
-        ##
         ports:
           metrics: 9308
-        ## @param metrics.kafka.service.clusterIP Static clusterIP or None for headless services
-        ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#choosing-your-own-ip-address
-        ##
         clusterIP: "None"
-        ## @param metrics.kafka.service.sessionAffinity Control where client requests go, to the same pod or round-robin
-        ## Values: ClientIP or None
-        ## ref: https://kubernetes.io/docs/user-guide/services/
-        ##
         sessionAffinity: None
-        ## @param metrics.kafka.service.annotations [object] Annotations for the Kafka exporter service
-        ##
         annotations:
           prometheus.io/scrape: "true"
           prometheus.io/port: "{{ .Values.metrics.kafka.service.ports.metrics }}"
           prometheus.io/path: "/metrics"
-      ## Kafka exporter pods ServiceAccount
-      ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
-      ##
       serviceAccount:
-        ## @param metrics.kafka.serviceAccount.create Enable creation of ServiceAccount for Kafka exporter pods
-        ##
         create: true
-        ## @param metrics.kafka.serviceAccount.name The name of the service account to use. If not set and `create` is `true`, a name is generated
-        ## If not set and create is true, a name is generated using the kafka.metrics.kafka.serviceAccountName template
-        ##
         name: ""
-        ## @param metrics.kafka.serviceAccount.automountServiceAccountToken Allows auto mount of ServiceAccountToken on the serviceAccount created
-        ## Can be set to false if pods using this serviceAccount do not need to use K8s API
-        ##
         automountServiceAccountToken: true
-    ## Prometheus JMX exporter: exposes the majority of Kafkas metrics
-    ##
     jmx:
-      ## @param metrics.jmx.enabled Whether or not to expose JMX metrics to Prometheus
-      ##
       enabled: true
-      ## Bitnami JMX exporter image
-      ## ref: https://hub.docker.com/r/bitnami/jmx-exporter/tags/
-      ## @param metrics.jmx.image.registry JMX exporter image registry
-      ## @param metrics.jmx.image.repository JMX exporter image repository
-      ## @param metrics.jmx.image.tag JMX exporter image tag (immutable tags are recommended)
-      ## @param metrics.jmx.image.pullPolicy JMX exporter image pull policy
-      ## @param metrics.jmx.image.pullSecrets Specify docker-registry secret names as an array
-      ##
       image:
         registry: docker.io
         repository: bitnami/jmx-exporter
         tag: 0.17.0-debian-11-r12
-        ## Specify a imagePullPolicy
-        ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
-        ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-        ##
         pullPolicy: IfNotPresent
-        ## Optionally specify an array of imagePullSecrets (secrets must be manually created in the namespace)
-        ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-        ## e.g:
-        ## pullSecrets:
-        ##   - myRegistryKeySecretName
-        ##
         pullSecrets: [ ]
-      ## Prometheus JMX exporter containers' Security Context
-      ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-      ## @param metrics.jmx.containerSecurityContext.enabled Enable Prometheus JMX exporter containers' Security Context
-      ## @param metrics.jmx.containerSecurityContext.runAsUser Set Prometheus JMX exporter containers' Security Context runAsUser
-      ## @param metrics.jmx.containerSecurityContext.runAsNonRoot Set Prometheus JMX exporter containers' Security Context runAsNonRoot
-      ## e.g:
-      ##   containerSecurityContext:
-      ##     enabled: true
-      ##     capabilities:
-      ##       drop: ["NET_RAW"]
-      ##     readOnlyRootFilesystem: true
-      ##
       containerSecurityContext:
         enabled: true
         runAsUser: 1001
         runAsNonRoot: true
-      ## @param metrics.jmx.containerPorts.metrics Prometheus JMX exporter metrics container port
-      ##
       containerPorts:
         metrics: 5556
-      ## Prometheus JMX exporter resource requests and limits
-      ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-      ## @param metrics.jmx.resources.limits The resources limits for the JMX exporter container
-      ## @param metrics.jmx.resources.requests The requested resources for the JMX exporter container
-      ##
       resources:
         limits: { }
         requests: { }
-      ## Prometheus JMX exporter service configuration
-      ##
       service:
-        ## @param metrics.jmx.service.ports.metrics Prometheus JMX exporter metrics service port
-        ##
         ports:
           metrics: 5556
-        ## @param metrics.jmx.service.clusterIP Static clusterIP or None for headless services
-        ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#choosing-your-own-ip-address
-        ##
         clusterIP: "None"
-        ## @param metrics.jmx.service.sessionAffinity Control where client requests go, to the same pod or round-robin
-        ## Values: ClientIP or None
-        ## ref: https://kubernetes.io/docs/user-guide/services/
-        ##
         sessionAffinity: None
-        ## @param metrics.jmx.service.annotations [object] Annotations for the Prometheus JMX exporter service
-        ##
         annotations:
           prometheus.io/scrape: "true"
           prometheus.io/port: "{{ .Values.metrics.jmx.service.ports.metrics }}"
           prometheus.io/path: "/"
-      ## @param metrics.jmx.whitelistObjectNames Allows setting which JMX objects you want to expose to via JMX stats to JMX exporter
-      ## Only whitelisted values will be exposed via JMX exporter. They must also be exposed via Rules. To expose all metrics
-      ## (warning its crazy excessive and they aren't formatted in a prometheus style) (1) `whitelistObjectNames: []`
-      ## (2) commented out above `overrideConfig`.
-      ##
       whitelistObjectNames:
         - kafka.controller:*
         - kafka.server:*
         - java.lang:*
         - kafka.network:*
         - kafka.log:*
-      ## @param metrics.jmx.config [string] Configuration file for JMX exporter
-      ## Specify content for jmx-kafka-prometheus.yml. Evaluated as a template
-      ##
-      ## Credits to the incubator/kafka chart for the JMX configuration.
-      ## https://github.com/helm/charts/tree/master/incubator/kafka
-      ##
       config: |-
         jmxUrl: service:jmx:rmi:///jndi/rmi://127.0.0.1:5555/jmxrmi
         lowercaseOutputName: true
@@ -1376,51 +1137,18 @@ kafka:
         {{- if .Values.metrics.jmx.whitelistObjectNames }}
         whitelistObjectNames: ["{{ join "\",\"" .Values.metrics.jmx.whitelistObjectNames }}"]
         {{- end }}
-      ## @param metrics.jmx.existingConfigmap Name of existing ConfigMap with JMX exporter configuration
-      ## NOTE: This will override metrics.jmx.config
-      ##
       existingConfigmap: ""
-    ## Prometheus Operator ServiceMonitor configuration
-    ##
     serviceMonitor:
-      ## @param metrics.serviceMonitor.enabled if `true`, creates a Prometheus Operator ServiceMonitor (requires `metrics.kafka.enabled` or `metrics.jmx.enabled` to be `true`)
-      ##
       enabled: false
-      ## @param metrics.serviceMonitor.namespace Namespace in which Prometheus is running
-      ##
       namespace: ""
-      ## @param metrics.serviceMonitor.interval Interval at which metrics should be scraped
-      ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
-      ##
       interval: ""
-      ## @param metrics.serviceMonitor.scrapeTimeout Timeout after which the scrape is ended
-      ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
-      ##
       scrapeTimeout: ""
-      ## @param metrics.serviceMonitor.labels Additional labels that can be used so ServiceMonitor will be discovered by Prometheus
-      ##
       labels: { }
-      ## @param metrics.serviceMonitor.selector Prometheus instance selector labels
-      ## ref: https://github.com/bitnami/charts/tree/master/bitnami/prometheus-operator#prometheus-configuration
-      ##
       selector: { }
-      ## @param metrics.serviceMonitor.relabelings RelabelConfigs to apply to samples before scraping
-      ##
       relabelings: [ ]
-      ## @param metrics.serviceMonitor.metricRelabelings MetricRelabelConfigs to apply to samples before ingestion
-      ##
       metricRelabelings: [ ]
-      ## @param metrics.serviceMonitor.honorLabels Specify honorLabels parameter to add the scrape endpoint
-      ##
       honorLabels: false
-      ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in prometheus.
-      ##
       jobLabel: ""
-
-  ## @section Kafka provisioning parameters
-
-  ## Kafka provisioning
-  ##
   provisioning:
     ## @param provisioning.enabled Enable kafka provisioning Job
     ##
