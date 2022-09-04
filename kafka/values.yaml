@@ -906,7 +906,7 @@ kafka:
       - ReadWriteOnce
     ## @param persistence.size PVC Storage Request for Kafka data volume
     ##
-    size: 50Gi
+    size: 100Gi
     ## @param persistence.annotations Annotations for the PVC
     ##
     annotations: { }
@@ -1639,7 +1639,7 @@ kafka:
     ## @param zookeeper.enabled Switch to enable or disable the ZooKeeper helm chart
     ##
     enabled: true
-    fullnameOverride: "zookeeper"
+    fullnameOverride: "kafka-zookeeper"
     ## @param zookeeper.replicaCount Number of ZooKeeper nodes
     ##
     replicaCount: 3

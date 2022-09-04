@@ -1,0 +1,6 @@
+dependencies:
+- name: redpanda-operator
+  repository: https://charts.vectorized.io/
+  version: v22.1.6
+digest: sha256:21dc4fcc7048ea4f52f90f51253d92afaac65d6ecbb8f41d7c888163394f52f5
+generated: "2022-09-04T17:24:57.37491416+02:00"
