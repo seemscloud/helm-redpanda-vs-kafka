@@ -18,8 +18,8 @@ sum(rate(kafka_server_brokertopicmetrics_total_bytesoutpersec_count[1m])/1000/10
 rpk topic delete filebeat
 rpk topic create filebeat \
   --replicas 3 \
-  --partitions 64 \
+  --partitions 128 \
   --topic-config segment.bytes=536870912 \
-  --topic-config retention.ms=1800000 \
+  --topic-config retention.ms=3600000 \
   --topic-config retention.bytes=-1 
 ```

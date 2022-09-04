@@ -9,7 +9,7 @@ spec:
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "9644"
-    prometheus.io/path: "/public_metrics"
+    prometheus.io/path: "/metrics"
   resources:
     requests:
       cpu: 1
