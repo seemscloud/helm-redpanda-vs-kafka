@@ -2,7 +2,7 @@ producer:
   nameOverride: ""
   fullnameOverride: "producer"
 
-  replicas: 25
+  replicas: 200
 
   daemonset:
     enabled: false
@@ -33,8 +33,8 @@ producer:
               - /data/server.log
 
         output.kafka:
-          hosts: [ "redpanda:9092" ]
-          # hosts: [ "kafka:9092" ]
+          # hosts: [ "redpanda:9092" ]
+          hosts: [ "kafka:9092" ]
           topic: "filebeat"
           required_acks: 1
           compression: gzip
