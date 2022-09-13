@@ -136,10 +136,10 @@ kafka:
   autoCreateTopicsEnable: true
   ## @param logFlushIntervalMessages The number of messages to accept before forcing a flush of data to disk
   ##
-  logFlushIntervalMessages: _10000
+  logFlushIntervalMessages: _1
   ## @param logFlushIntervalMs The maximum amount of time a message can sit in a log before we force a flush
   ##
-  logFlushIntervalMs: 1000
+  logFlushIntervalMs: 0
   ## @param logRetentionBytes A size-based retention policy for logs
   ##
   logRetentionBytes: _1073741824
@@ -1174,9 +1174,7 @@ kafka:
         replicationFactor: 3
         config:
           retention.ms: "3600000"
-          segment.bytes: "536870912"
           retention.bytes: "-1"
-
 
     ## @param provisioning.tolerations Tolerations for pod assignment
     ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/

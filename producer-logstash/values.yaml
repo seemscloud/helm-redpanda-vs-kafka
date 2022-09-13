@@ -1,8 +1,8 @@
-consumer:
+producer-logstash:
   nameOverride: ""
-  fullnameOverride: "consumer"
+  fullnameOverride: "producer-logstash"
 
-  replicas: 6
+  replicas: 30
 
   logstashConfig:
     logstash.yml: |
@@ -20,19 +20,21 @@ consumer:
   logstashPipeline:
     logstash.conf: |-
       input {
-        kafka {
-          # bootstrap_servers => [ "kafka:9092" ]
-          bootstrap_servers => [ "redpanda:9092" ]
-          topics => [ "filebeat" ]
-          auto_offset_reset => "earliest"
-          consumer_threads => 6
-          decorate_events => false
-          client_id => "${HOSTNAME}"
-          group_id => "consumer"
+          beats {
+          port => 5044
         }
       }
       output {
-        null {}
+        kafka {
+          # bootstrap_servers => "kafka:9092"
+          bootstrap_servers => "redpanda:9092"
+          topic_id => "filebeat"
+          codec => json
+          compression_type => "gzip"  
+          acks => all
+          batch_size => 131072
+          linger_ms => 10
+        }
       }
 
   logstashPatternDir: "/usr/share/logstash/patterns/"
@@ -68,7 +70,7 @@ consumer:
       cpu: "100m"
       memory: "100Mi"
     limits:
-      cpu: "6"
+      cpu: "1"
       memory: "8704Mi"
 
   volumeClaimTemplate:
@@ -107,6 +109,7 @@ consumer:
 
   extraVolumes: [ ]
   extraVolumeMounts: [ ]
+
   extraContainers:
     - name: exporter
       image: bitnami/logstash-exporter
@@ -143,7 +146,7 @@ consumer:
 
   antiAffinityTopologyKey: "kubernetes.io/hostname"
 
-  antiAffinity: "hard"
+  antiAffinity: "soft"
 
   nodeAffinity: { }
 
@@ -183,7 +186,7 @@ consumer:
     httpGet:
       path: /
       port: http
-    initialDelaySeconds: 25
+    initialDelaySeconds: 120
     periodSeconds: 10
     timeoutSeconds: 5
     failureThreshold: 3
@@ -193,7 +196,7 @@ consumer:
     httpGet:
       path: /
       port: http
-    initialDelaySeconds: 25
+    initialDelaySeconds: 120
     periodSeconds: 10
     timeoutSeconds: 5
     failureThreshold: 3

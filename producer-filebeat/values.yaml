@@ -1,8 +1,8 @@
-producer:
+producer-filebeat:
   nameOverride: ""
-  fullnameOverride: "producer"
+  fullnameOverride: "producer-filebeat"
 
-  replicas: 200
+  replicas: 100
 
   daemonset:
     enabled: false
@@ -17,7 +17,7 @@ producer:
     extraVolumes:
       - name: snapshot
         persistentVolumeClaim:
-          claimName: snapshot
+          claimName: snapshot0
     extraVolumeMounts:
       - mountPath: /data
         name: snapshot
@@ -32,12 +32,9 @@ producer:
             paths:
               - /data/server.log
 
-        output.kafka:
-          # hosts: [ "redpanda:9092" ]
-          hosts: [ "kafka:9092" ]
-          topic: "filebeat"
-          required_acks: 1
-          compression: gzip
+        output.logstash:
+          hosts: ["producer:5044"]
+          loadbalance: true
 
     nodeSelector: { }
     secretMounts: [ ]
@@ -53,14 +50,8 @@ producer:
         memory: "1Gi"
     tolerations: [ ]
 
-  extraContainers: |
-    - name: exporter
-      image: sepa/beats-exporter
-      args:
-        - -p=5066
-
+  extraContainers: []
   extraInitContainers: [ ]
-  # - name: dummy-init
 
   hostPathRoot: /var/lib
 

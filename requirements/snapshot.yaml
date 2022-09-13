@@ -17,7 +17,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: snapshot
+  name: snapshot1
 spec:
   dataSource:
     name: data

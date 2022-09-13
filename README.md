@@ -19,8 +19,14 @@ rpk topic delete filebeat
 
 rpk topic create filebeat \
   --replicas 3 \
-  --partitions 128 \
+  --partitions 64 \
   --topic-config segment.bytes=536870912 \
   --topic-config retention.ms=3600000 \
   --topic-config retention.bytes=-1 
+```
+
+
+```bash
+kubectl  get pods  | grep -i producer | awk '{print $1}' | xargs
+kubectl delete pods --force `kubectl  get pods  | grep -i producer | awk '{print $1}' | xargs`
 ```

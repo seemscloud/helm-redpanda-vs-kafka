@@ -1,0 +1,15 @@
+apiVersion: v2
+
+name: producer-logstash
+description: Umbrella
+
+type: application
+
+version: 0.0.1
+appVersion: "0.0.1"
+
+dependencies:
+  - name: logstash
+    alias: producer-logstash
+    version: 7.17.3
+    repository: https://helm.elastic.co

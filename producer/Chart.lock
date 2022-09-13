@@ -1,6 +1,0 @@
-dependencies:
-- name: filebeat
-  repository: https://helm.elastic.co
-  version: 7.17.3
-digest: sha256:cfed0aec17d11801461638f22fc3fc9cb70c5c94feb48f7f00c462861c0a0652
-generated: "2022-09-04T17:43:21.602968724+02:00"
