@@ -41,10 +41,6 @@ producer:
           required_acks: -1
           compression: gzip
 
-        #output.logstash:
-        #  hosts: ["producer:5044"]
-        #  loadbalance: true
-
     nodeSelector: { }
     secretMounts: [ ]
     securityContext:
