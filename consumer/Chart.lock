@@ -1,6 +1,0 @@
-dependencies:
-- name: logstash
-  repository: https://helm.elastic.co
-  version: 7.17.3
-digest: sha256:0688fcf0e30d15c44bfd6f60414cda97e2dcf04d935e8929e2607b97a6fc5fb9
-generated: "2022-09-04T17:35:51.554273623+02:00"
