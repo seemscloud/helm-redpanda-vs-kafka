@@ -1,8 +1,8 @@
-producer-filebeat:
+producer:
   nameOverride: ""
-  fullnameOverride: "producer-filebeat"
+  fullnameOverride: "producer"
 
-  replicas: 200
+  replicas: 100
 
   daemonset:
     enabled: false
@@ -12,15 +12,19 @@ producer-filebeat:
     labels: { }
     affinity: { }
     enabled: true
+
     envFrom: [ ]
     extraEnvs: [ ]
+
     extraVolumes:
       - name: snapshot
         persistentVolumeClaim:
           claimName: snapshot0
+
     extraVolumeMounts:
       - mountPath: /data
         name: snapshot
+
     filebeatConfig:
       filebeat.yml: |
         http:
@@ -34,7 +38,7 @@ producer-filebeat:
           hosts: [ "kafka:9092" ]
           # hosts: [ "redpanda:9092" ]
           topic: "filebeat"
-          required_acks: 1
+          required_acks: -1
           compression: gzip
 
         #output.logstash:
@@ -52,7 +56,7 @@ producer-filebeat:
         memory: "100Mi"
       limits:
         cpu: "1"
-        memory: "1Gi"
+        memory: "8Gi"
     tolerations: [ ]
 
   extraContainers: [ ]
