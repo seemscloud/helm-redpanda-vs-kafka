@@ -2,7 +2,7 @@ consumer:
   nameOverride: ""
   fullnameOverride: "consumer"
 
-  replicas: 6
+  replicas: 16
 
   logstashConfig:
     logstash.yml: |
@@ -13,7 +13,7 @@ consumer:
         pipeline.batch.delay: 50
         pipeline.ecs_compatibility: disabled
         pipeline.ordered: false
-        pipeline.workers: 6
+        pipeline.workers: 4
         path.config: "/usr/share/logstash/pipeline/logstash.conf"
         queue.type: memory
 
@@ -21,14 +21,14 @@ consumer:
     logstash.conf: |-
       input {
         kafka {
-          # bootstrap_servers => [ "kafka:9092" ]
-          bootstrap_servers => [ "redpanda:9092" ]
+          bootstrap_servers => [ "kafka:9092" ]
+          # bootstrap_servers => [ "redpanda:9092" ]
           topics => [ "filebeat" ]
-          auto_offset_reset => "earliest"
-          consumer_threads => 6
-          decorate_events => false
           client_id => "${HOSTNAME}"
           group_id => "consumer"
+          auto_offset_reset => "earliest"
+          consumer_threads => 4
+          decorate_events => false
         }
       }
       output {
@@ -68,7 +68,7 @@ consumer:
       cpu: "100m"
       memory: "100Mi"
     limits:
-      cpu: "6"
+      cpu: "4"
       memory: "8704Mi"
 
   volumeClaimTemplate:
@@ -177,7 +177,7 @@ consumer:
     runAsNonRoot: true
     runAsUser: 1000
 
-  terminationGracePeriod: 120
+  terminationGracePeriod: 1
 
   livenessProbe:
     httpGet:

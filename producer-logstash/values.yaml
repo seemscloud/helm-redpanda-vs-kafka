@@ -180,13 +180,13 @@ producer-logstash:
     runAsNonRoot: true
     runAsUser: 1000
 
-  terminationGracePeriod: 120
+  terminationGracePeriod: 1
 
   livenessProbe:
     httpGet:
       path: /
       port: http
-    initialDelaySeconds: 120
+    initialDelaySeconds: 25
     periodSeconds: 10
     timeoutSeconds: 5
     failureThreshold: 3
@@ -196,7 +196,7 @@ producer-logstash:
     httpGet:
       path: /
       port: http
-    initialDelaySeconds: 120
+    initialDelaySeconds: 25
     periodSeconds: 10
     timeoutSeconds: 5
     failureThreshold: 3

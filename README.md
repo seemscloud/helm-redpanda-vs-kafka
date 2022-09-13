@@ -25,8 +25,7 @@ rpk topic create filebeat \
   --topic-config retention.bytes=-1 
 ```
 
-
 ```bash
-kubectl  get pods  | grep -i producer | awk '{print $1}' | xargs
-kubectl delete pods --force `kubectl  get pods  | grep -i producer | awk '{print $1}' | xargs`
+kubectl  get pods  | grep -i consumer | awk '{print $1}' | xargs
+kubectl delete pods --force `kubectl  get pods  | grep -i consumer | awk '{print $1}' | xargs`
 ```
