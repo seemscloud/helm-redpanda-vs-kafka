@@ -2,7 +2,7 @@ producer-filebeat:
   nameOverride: ""
   fullnameOverride: "producer-filebeat"
 
-  replicas: 100
+  replicas: 200
 
   daemonset:
     enabled: false
@@ -24,17 +24,22 @@ producer-filebeat:
     filebeatConfig:
       filebeat.yml: |
         http:
-          enabled: true
-          host: "0.0.0.0"
-          port: 5066
+          enabled: false
         filebeat.inputs:
           - type: log
             paths:
               - /data/server.log
 
-        output.logstash:
-          hosts: ["producer:5044"]
-          loadbalance: true
+        output.kafka:
+          hosts: [ "kafka:9092" ]
+          # hosts: [ "redpanda:9092" ]
+          topic: "filebeat"
+          required_acks: 1
+          compression: gzip
+
+        #output.logstash:
+        #  hosts: ["producer:5044"]
+        #  loadbalance: true
 
     nodeSelector: { }
     secretMounts: [ ]
@@ -50,7 +55,7 @@ producer-filebeat:
         memory: "1Gi"
     tolerations: [ ]
 
-  extraContainers: []
+  extraContainers: [ ]
   extraInitContainers: [ ]
 
   hostPathRoot: /var/lib
