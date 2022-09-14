@@ -1155,7 +1155,7 @@ kafka:
     enabled: true
     ## @param provisioning.numPartitions Default number of partitions for topics when unspecified
     ##
-    numPartitions: 100
+    numPartitions: 60
     ## @param provisioning.replicationFactor Default replication factor for topics when unspecified
     ##
     replicationFactor: 3
@@ -1170,10 +1170,10 @@ kafka:
     ##
     topics:
       - name: "filebeat"
-        partitions: 100
+        partitions: 60
         replicationFactor: 3
         config:
-          retention.ms: "3600000"
+          retention.ms: "36000000"
           segment.bytes: "536870912"
           retention.bytes: "-1"
 

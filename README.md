@@ -19,8 +19,8 @@ rpk topic delete filebeat
 
 rpk topic create filebeat \
   --replicas 3 \
-  --partitions 100 \
-  --topic-config retention.ms=3600000 \
+  --partitions 60 \
+  --topic-config retention.ms=36000000 \
   --topic-config retention.bytes=-1
 ```
 
