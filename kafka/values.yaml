@@ -172,10 +172,10 @@ kafka:
   transactionStateLogMinIsr: 1
   ## @param numIoThreads The number of threads doing disk I/O
   ##
-  numIoThreads: 8
+  numIoThreads: 16
   ## @param numNetworkThreads The number of threads handling network requests
   ##
-  numNetworkThreads: 3
+  numNetworkThreads: 16
   ## @param numPartitions The default number of log partitions per topic
   ##
   numPartitions: 1
@@ -1155,7 +1155,7 @@ kafka:
     enabled: true
     ## @param provisioning.numPartitions Default number of partitions for topics when unspecified
     ##
-    numPartitions: 60
+    numPartitions: 100
     ## @param provisioning.replicationFactor Default replication factor for topics when unspecified
     ##
     replicationFactor: 3
@@ -1170,7 +1170,7 @@ kafka:
     ##
     topics:
       - name: "filebeat"
-        partitions: 60
+        partitions: 100
         replicationFactor: 3
         config:
           retention.ms: "36000000"

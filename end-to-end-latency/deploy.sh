@@ -1,0 +1,1 @@
+kubectl apply -f end-to-end-latency.yaml

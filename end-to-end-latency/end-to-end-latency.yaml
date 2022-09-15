@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: end-to-end-latency-deployment
+  labels:
+    app: end-to-end-latency
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8000"
+    prometheus.io/path: "/metrics"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: end-to-end-latency
+  template:
+    metadata:
+      labels:
+        app: end-to-end-latency
+    spec:
+      containers:
+        - name: end-to-end-latency
+          image: theanotherwise/theanotherwise/kafka-end-to-end-latency:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: "BOOTSTRAP_SERVERS"
+              value: "redpanda:9092,"
+            - name: "TOPIC_NAME"
+              value: "filebeat"
+            - name: "INIT_DELAY"
+              value: "0"
+            - name: "BATCH_SIZE"
+              value: "1000"
+            - name: "BATCH_DELAY"
+              value: "1000"
+            - name: "MESSAGE_SIZE"
+              value: "1024"
+            - name: "GROUP_NAME"
+              value: "seemscloud"
+            - name: "PROMETHEUS_MULTIPROC_DIR"
+              value: "/tmp/"
+            - name: "LOG_LEVEL"
+              value: "INFO"
+---
