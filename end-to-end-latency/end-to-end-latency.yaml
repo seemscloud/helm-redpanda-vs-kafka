@@ -21,6 +21,13 @@ spec:
       containers:
         - name: end-to-end-latency
           image: theanotherwise/theanotherwise/kafka-end-to-end-latency:latest
+          resources:
+            limits:
+              cpu: "2"
+              memory: "2GB"
+            requests:
+              cpu: "2"
+              memory: "2GB"
           ports:
             - containerPort: 8000
           env:
@@ -42,4 +49,3 @@ spec:
               value: "/tmp/"
             - name: "LOG_LEVEL"
               value: "INFO"
----
