@@ -1,32 +1,85 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: end-to-end-latency-deployment
+  name: end-to-end-latency-kafka
   labels:
-    app: end-to-end-latency
+    app: end-to-end-latency-kafka
 spec:
-  replicas: 1
+  replicas: 25
   selector:
     matchLabels:
-      app: end-to-end-latency
+      app: end-to-end-latency-kafka
   template:
     metadata:
       labels:
-        app: end-to-end-latency
+        app: end-to-end-latency-kafka
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8000"
         prometheus.io/path: "/metrics"
     spec:
       containers:
-        - name: end-to-end-latency
+        - name: end-to-end-latency-kafka
           imagePullPolicy: Always
           image: theanotherwise/kafka-end-to-end-latency:latest
           resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
             limits:
               cpu: 3
               memory: 6Gi
+          ports:
+            - containerPort: 8000
+          env:
+            - name: "BOOTSTRAP_SERVERS"
+              value: "kafka-headless:9092,"
+            - name: "TOPIC_NAME"
+              value: "filebeat"
+            - name: "INIT_DELAY"
+              value: "0"
+            - name: "BATCH_SIZE"
+              value: "1000"
+            - name: "BATCH_DELAY"
+              value: "1"
+            - name: "MESSAGE_SIZE"
+              value: "1024"
+            - name: "GROUP_NAME"
+              value: "seemscloud"
+            - name: "PROMETHEUS_MULTIPROC_DIR"
+              value: "/tmp/"
+            - name: "LOG_LEVEL"
+              value: "INFO"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: end-to-end-latency-redpanda
+  labels:
+    app: end-to-end-latency-redpanda
+spec:
+  replicas: 25
+  selector:
+    matchLabels:
+      app: end-to-end-latency-redpanda
+  template:
+    metadata:
+      labels:
+        app: end-to-end-latency-redpanda
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: end-to-end-latency-redpanda
+          imagePullPolicy: Always
+          image: theanotherwise/kafka-end-to-end-latency:latest
+          resources:
             requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
               cpu: 3
               memory: 6Gi
           ports:
@@ -41,7 +94,7 @@ spec:
             - name: "BATCH_SIZE"
               value: "1000"
             - name: "BATCH_DELAY"
-              value: "1000"
+              value: "1"
             - name: "MESSAGE_SIZE"
               value: "1024"
             - name: "GROUP_NAME"

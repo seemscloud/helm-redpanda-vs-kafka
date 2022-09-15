@@ -1,0 +1,1 @@
+kubectl delete -f end-to-end-latency.yaml
