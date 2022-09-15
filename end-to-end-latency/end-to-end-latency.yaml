@@ -4,12 +4,8 @@ metadata:
   name: end-to-end-latency-deployment
   labels:
     app: end-to-end-latency
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "8000"
-    prometheus.io/path: "/metrics"
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: end-to-end-latency
@@ -17,17 +13,22 @@ spec:
     metadata:
       labels:
         app: end-to-end-latency
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
         - name: end-to-end-latency
-          image: theanotherwise/theanotherwise/kafka-end-to-end-latency:latest
+          imagePullPolicy: Always
+          image: theanotherwise/kafka-end-to-end-latency:latest
           resources:
             limits:
-              cpu: "2"
-              memory: "2GB"
+              cpu: 3
+              memory: 6Gi
             requests:
-              cpu: "2"
-              memory: "2GB"
+              cpu: 3
+              memory: 6Gi
           ports:
             - containerPort: 8000
           env:
