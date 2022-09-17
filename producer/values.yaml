@@ -37,7 +37,7 @@ producer:
         output.kafka:
           hosts: [ "kafka:9092" ]
           # hosts: [ "redpanda:9092" ]
-          topic: "filebeat"
+          topic: "filebeat40"
           required_acks: -1
           compression: gzip
 

@@ -1154,32 +1154,38 @@ kafka:
       honorLabels: false
       jobLabel: ""
   provisioning:
-    ## @param provisioning.enabled Enable kafka provisioning Job
-    ##
     enabled: true
-    ## @param provisioning.numPartitions Default number of partitions for topics when unspecified
-    ##
-    numPartitions: 100
-    ## @param provisioning.replicationFactor Default replication factor for topics when unspecified
-    ##
+    numPartitions: 50
     replicationFactor: 3
-    ## @param provisioning.topics Kafka topics to provision
-    ## - name: topic-name
-    ##   partitions: 1
-    ##   replicationFactor: 1
-    ##   ## https://kafka.apache.org/documentation/#topicconfigs
-    ##   config:
-    ##     max.message.bytes: 64000
-    ##     flush.messages: 1
-    ##
     topics:
-      - name: "filebeat"
+      - name: "filebeat40"
+        partitions: 40
+        replicationFactor: 3
+        config:
+          retention.ms: "36000000"
+          retention.bytes: "-1"
+          segment.bytes: "536870912"
+      - name: "filebeat60"
+        partitions: 60
+        replicationFactor: 3
+        config:
+          retention.ms: "36000000"
+          retention.bytes: "-1"
+          segment.bytes: "536870912"
+      - name: "filebeat80"
+        partitions: 80
+        replicationFactor: 3
+        config:
+          retention.ms: "36000000"
+          retention.bytes: "-1"
+          segment.bytes: "536870912"
+      - name: "filebeat100"
         partitions: 100
         replicationFactor: 3
         config:
           retention.ms: "36000000"
-          segment.bytes: "536870912"
           retention.bytes: "-1"
+          segment.bytes: "536870912"
 
     ## @param provisioning.tolerations Tolerations for pod assignment
     ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/

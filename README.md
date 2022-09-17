@@ -17,9 +17,36 @@ sum(rate(kafka_server_brokertopicmetrics_total_bytesoutpersec_count[1m])/1000/10
 ## Redpanda Topic
 
 ```bash
-rpk topic delete filebeat
+rpk topic delete filebeat40
+rpk topic delete filebeat60
+rpk topic delete filebeat80
+rpk topic delete filebeat100
 
-rpk topic create filebeat \
+rpk topic create filebeat40 \
+  --replicas 3 \
+  --partitions 100 \
+  --topic-config retention.ms=36000000 \
+  --topic-config retention.bytes=-1
+  
+rpk topic create filebeat60 \
+  --replicas 3 \
+  --partitions 100 \
+  --topic-config retention.ms=36000000 \
+  --topic-config retention.bytes=-1
+  
+rpk topic create filebeat60 \
+  --replicas 3 \
+  --partitions 100 \
+  --topic-config retention.ms=36000000 \
+  --topic-config retention.bytes=-1
+
+rpk topic create filebeat80 \
+  --replicas 3 \
+  --partitions 100 \
+  --topic-config retention.ms=36000000 \
+  --topic-config retention.bytes=-1
+  
+rpk topic create filebeat100 \
   --replicas 3 \
   --partitions 100 \
   --topic-config retention.ms=36000000 \
@@ -28,7 +55,7 @@ rpk topic create filebeat \
 
 ```bash
 for i in `seq 1 100` ; do
-  kubectl delete pods --force `kubectl  get pods  | grep -i end-to-end-latency | awk '{print $1}' | head -10 | xargs`
+  kubectl delete pods --force `kubectl  get pods  | grep -i producer | awk '{print $1}' | head -10 | xargs`
 done
 ```
 
