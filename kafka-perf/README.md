@@ -31,3 +31,8 @@ kafka-run-class.sh \
     kafka-0:9092,kafka-1:9092,kafka-2:9092 \
     filebeat 10000000 all 1000
 ```
+
+```bash
+redpanda-0.redpanda.default.svc.cluster.local,redpanda-1.redpanda.default.svc.cluster.local,redpanda-2.redpanda.default.svc.cluster.local
+kafka-0.kafka-headless.default.svc.cluster.local,kafka-1.kafka-headless.default.svc.cluster.local,kafka-2.kafka-headless.default.svc.cluster.local
+```
