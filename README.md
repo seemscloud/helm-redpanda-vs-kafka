@@ -14,6 +14,8 @@ sum(rate(vectorized_kafka_rpc_sent_bytes[1m])/1000/1000)
 sum(rate(kafka_server_brokertopicmetrics_total_bytesoutpersec_count[1m])/1000/1000)
 ```
 
+## Redpanda Topic
+
 ```bash
 rpk topic delete filebeat
 
