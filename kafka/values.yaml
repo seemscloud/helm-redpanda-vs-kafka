@@ -404,7 +404,11 @@ kafka:
   ##   - name: KAFKA_CFG_BACKGROUND_THREADS
   ##     value: "10"
   ##
-  extraEnvVars: [ ]
+  extraEnvVars:
+    - name: "KAFKA_CFG_NUM_REPLICA_FETCHERS"
+      value: "16"
+    - name: "KAFKA_CFG_REPLICA_FETCH_MAX_BYTES"
+      value: "10485760"
   ## @param extraEnvVarsCM ConfigMap with extra environment variables
   ##
   extraEnvVarsCM: ""
