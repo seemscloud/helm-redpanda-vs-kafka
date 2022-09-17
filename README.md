@@ -30,10 +30,13 @@ for i in `seq 1 100` ; do
 done
 ```
 
-# Kafka manually add:
+## Required params for Kafka - Otherwise, the gap between Redpanda and Kafka would be much larger.
+
 ```bash
-- name: KAFKA_CFG_NUM_REPLICA_FETCHERS
-  value: "16"
-- name: KAFKA_CFG_REPLICA_FETCH_MAX_BYTES
-  value: "10485760"
+num.replica.fetchers=16
+message.max.bytes=10485760
+replica.fetch.max.bytes=10485760
+num.network.threads=16
+num.io.threads=16
+log.flush.interval.messages=1
 ```
