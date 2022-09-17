@@ -29,3 +29,11 @@ for i in `seq 1 100` ; do
   kubectl delete pods --force `kubectl  get pods  | grep -i end-to-end-latency-deployment | awk '{print $1}' | head -10 | xargs`
 done
 ```
+
+# Kafka manually add:
+```bash
+- name: KAFKA_CFG_NUM_REPLICA_FETCHERS
+  value: "16"
+- name: KAFKA_CFG_REPLICA_FETCH_MAX_BYTES
+  value: "10485760"
+```
