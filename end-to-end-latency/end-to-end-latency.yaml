@@ -43,7 +43,7 @@ spec:
             - name: "LINGER_MS"
               value: "0"
             - name: "COMPRESSION"
-              value: "gzip"
+              value: "None"
             - name: "MESSAGE_SIZE"
               value: "1024"
             - name: "GROUP_NAME"
