@@ -1155,11 +1155,11 @@ kafka:
       jobLabel: ""
   provisioning:
     enabled: true
-    numPartitions: 100
+    numPartitions: 25
     replicationFactor: 3
     topics:
       - name: "filebeat"
-        partitions: 100
+        partitions: 25
         replicationFactor: 3
         config:
           retention.ms: "36000000"

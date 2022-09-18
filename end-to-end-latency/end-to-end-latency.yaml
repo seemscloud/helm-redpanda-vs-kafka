@@ -76,7 +76,7 @@ spec:
       containers:
         - name: end-to-end-latency-redpanda
           imagePullPolicy: Always
-          image: theanotherwise/kafka-end-to-end-latency:latest
+          image: theanotherwise/kafka-end-to-end-latency:1.0.0
           resources:
             requests:
               cpu: 100m
@@ -98,7 +98,7 @@ spec:
             - name: "LINGER_MS"
               value: "0"
             - name: "COMPRESSION"
-              value: "gzip"
+              value: "None"
             - name: "MESSAGE_SIZE"
               value: "1024"
             - name: "GROUP_NAME"
