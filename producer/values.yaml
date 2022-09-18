@@ -35,11 +35,11 @@ producer:
               - /data/server.log
 
         output.kafka:
-          hosts: [ "kafka:9092" ]
-          # hosts: [ "redpanda:9092" ]
-          topic: "filebeat40"
+          # hosts: [ "kafka:9092" ]
+          hosts: [ "redpanda:9092" ]
+          topic: "filebeat"
           required_acks: -1
-          compression: gzip
+          compression: none
 
     nodeSelector: { }
     secretMounts: [ ]

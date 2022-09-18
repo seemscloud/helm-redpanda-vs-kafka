@@ -2,7 +2,7 @@ consumer:
   nameOverride: ""
   fullnameOverride: "consumer"
 
-  replicas: 10
+  replicas: 25
 
   logstashConfig:
     logstash.yml: |
@@ -21,9 +21,9 @@ consumer:
     logstash.conf: |-
       input {
         kafka {
-          bootstrap_servers => [ "kafka:9092" ]
-          # bootstrap_servers => [ "redpanda:9092" ]
-          topics => [ "filebeat40" ]
+          # bootstrap_servers => [ "kafka:9092" ]
+          bootstrap_servers => [ "redpanda:9092" ]
+          topics => [ "filebeat" ]
           client_id => "${HOSTNAME}"
           group_id => "consumer"
           auto_offset_reset => "earliest"

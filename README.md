@@ -17,36 +17,9 @@ sum(rate(kafka_server_brokertopicmetrics_total_bytesoutpersec_count[1m])/1000/10
 ## Redpanda Topic
 
 ```bash
-rpk topic delete filebeat40
-rpk topic delete filebeat60
-rpk topic delete filebeat80
-rpk topic delete filebeat100
+rpk topic delete filebeat
 
-rpk topic create filebeat40 \
-  --replicas 3 \
-  --partitions 100 \
-  --topic-config retention.ms=36000000 \
-  --topic-config retention.bytes=-1
-  
-rpk topic create filebeat60 \
-  --replicas 3 \
-  --partitions 100 \
-  --topic-config retention.ms=36000000 \
-  --topic-config retention.bytes=-1
-  
-rpk topic create filebeat60 \
-  --replicas 3 \
-  --partitions 100 \
-  --topic-config retention.ms=36000000 \
-  --topic-config retention.bytes=-1
-
-rpk topic create filebeat80 \
-  --replicas 3 \
-  --partitions 100 \
-  --topic-config retention.ms=36000000 \
-  --topic-config retention.bytes=-1
-  
-rpk topic create filebeat100 \
+rpk topic create filebeat \
   --replicas 3 \
   --partitions 100 \
   --topic-config retention.ms=36000000 \
